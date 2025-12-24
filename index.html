@@ -18,15 +18,31 @@
             font-size: 4rem;
             color: white;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-            margin-top: 20vh;
+            margin-top: 12vh;
+        }
+        h2 {
+            text-align: center;
+            font-family: 'Cormorant Garamond', 'Georgia', serif;
+            font-size: 1.5rem;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+            margin-top: 1rem;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <h1 id="greeting"></h1>
+    <h2 id="subheader"></h2>
     <script>
         const greetingText = "Merry Christmas!";
+        const subheaderText = "Tap to continue";
         document.getElementById('greeting').textContent = greetingText;
+        document.getElementById('subheader').textContent = subheaderText;
+        document.getElementById('subheader').addEventListener('click', () => {
+            // Placeholder for continue action
+            alert('Continuing...');
+        });
     </script>
 </body>
 </html>
