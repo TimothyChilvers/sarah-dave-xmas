@@ -29,6 +29,19 @@
             margin-top: 1rem;
             cursor: pointer;
         }
+        /* Hidden until first flicker */
+        #subheader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: opacity 600ms ease, transform 600ms ease, visibility 0s linear 600ms;
+        }
+        #subheader.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            transition: opacity 600ms ease, transform 600ms ease;
+        }
         @keyframes flicker {
             0% { opacity: 1; filter: none; }
             30% { opacity: 0.1; filter: blur(2px) hue-rotate(10deg); }
@@ -54,7 +67,7 @@
 </head>
 <body>
     <h1 id="greeting"></h1>
-    <h2 id="subheader"></h2>
+    <h2 id="subheader" class="hidden"></h2>
     <script>
         const greetingText = "Merry Christmas!";
         const scaryText = "Scary Christmas!";
@@ -88,6 +101,15 @@
                 setTimeout(() => {
                     spawnGhosts(3);
                 }, ghostDelay);
+                // Reveal subheader on first flicker
+                if (!subheaderRevealed) {
+                    subheaderRevealed = true;
+                    // ensure reflow then toggle
+                    requestAnimationFrame(() => {
+                        subheaderEl.classList.remove('hidden');
+                        subheaderEl.classList.add('visible');
+                    });
+                }
                 // Schedule next flicker
                 scheduleNext();
             }, 900);
@@ -96,6 +118,9 @@
         function scheduleNext() {
             setTimeout(doFlickerOnce, randomIntervalMs());
         }
+
+        // Track whether we've revealed the subheader yet
+        let subheaderRevealed = false;
 
         // Start cycle
         scheduleNext();
