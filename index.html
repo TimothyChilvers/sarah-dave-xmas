@@ -29,6 +29,16 @@
             margin-top: 1rem;
             cursor: pointer;
         }
+        @keyframes flicker {
+            0% { opacity: 1; filter: none; }
+            30% { opacity: 0.1; filter: blur(2px) hue-rotate(10deg); }
+            60% { opacity: 0.9; filter: none; }
+            100% { opacity: 1; filter: none; }
+        }
+        .flicker {
+            animation: flicker 800ms linear 0s 1;
+            color: #ffdddd;
+        }
     </style>
 </head>
 <body>
@@ -36,13 +46,43 @@
     <h2 id="subheader"></h2>
     <script>
         const greetingText = "Merry Christmas!";
+        const scaryText = "Scary Christmas!";
         const subheaderText = "Tap to continue";
-        document.getElementById('greeting').textContent = greetingText;
-        document.getElementById('subheader').textContent = subheaderText;
-        document.getElementById('subheader').addEventListener('click', () => {
+        const greetingEl = document.getElementById('greeting');
+        const subheaderEl = document.getElementById('subheader');
+        greetingEl.textContent = greetingText;
+        subheaderEl.textContent = subheaderText;
+        subheaderEl.addEventListener('click', () => {
             // Placeholder for continue action
             alert('Continuing...');
         });
+
+        function randomIntervalMs() {
+            // 10 to 20 seconds in milliseconds
+            return (10000 + Math.floor(Math.random() * 10001));
+        }
+
+        function doFlickerOnce() {
+            // Swap text and add flicker class
+            const original = greetingEl.textContent;
+            greetingEl.textContent = scaryText;
+            greetingEl.classList.add('flicker');
+
+            // After animation, restore
+            setTimeout(() => {
+                greetingEl.classList.remove('flicker');
+                greetingEl.textContent = original;
+                // Schedule next
+                scheduleNext();
+            }, 900);
+        }
+
+        function scheduleNext() {
+            setTimeout(doFlickerOnce, randomIntervalMs());
+        }
+
+        // Start cycle
+        scheduleNext();
     </script>
 </body>
 </html>
