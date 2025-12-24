@@ -26,6 +26,24 @@
             margin-top: 6vh;
             transition: font-size 600ms ease, margin-top 600ms ease;
         }
+        /* Code input shown after continuing */
+        .code-input {
+            display: block;
+            margin: 1rem auto 0 auto;
+            padding: 0.4rem 0.6rem;
+            font-size: 1.1rem;
+            font-family: 'Cormorant Garamond', 'Georgia', serif;
+            background: rgba(0,0,0,0.4);
+            color: white;
+            border: 0;
+            border-bottom: 2px solid rgba(255,255,255,0.6);
+            outline: none;
+            min-width: 260px;
+            text-align: center;
+        }
+        .code-input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
         h2 {
             text-align: center;
             font-family: 'Cormorant Garamond', 'Georgia', serif;
@@ -83,15 +101,63 @@
         greetingEl.textContent = greetingText;
         subheaderEl.textContent = subheaderText;
         let continued = false;
+        function placeholderMethod() {
+            // This is the placeholder method triggered by entering the secret code.
+            // Replace this with the real action you want to occur.
+            console.log('placeholderMethod invoked');
+            subheaderEl.textContent = 'Code accepted.';
+            subheaderEl.style.cursor = 'default';
+            const ip = document.getElementById('codeInput');
+            if (ip) {
+                ip.disabled = true;
+                ip.style.opacity = '0.8';
+            }
+            // Visual acknowledgement on greeting
+            greetingEl.style.transition = 'transform 400ms ease';
+            greetingEl.style.transform = 'scale(1.02)';
+            setTimeout(() => greetingEl.style.transform = '', 350);
+        }
+
+        function createCodeInput() {
+            // If already created, return it
+            let existing = document.getElementById('codeInput');
+            if (existing) return existing;
+            const input = document.createElement('input');
+            input.id = 'codeInput';
+            input.className = 'code-input';
+            input.type = 'text';
+            input.placeholder = 'Guess';
+            // When Enter pressed, check value
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    if (input.value === '2:22') {
+                        placeholderMethod();
+                    } else {
+                        // small shake to indicate wrong code
+                        input.animate([{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'translateX(0)' }], { duration: 200 });
+                    }
+                }
+            });
+            // Also allow immediate detection when exact value entered
+            input.addEventListener('input', () => {
+                if (input.value === '2:22') placeholderMethod();
+            });
+            // Insert after subheader
+            subheaderEl.insertAdjacentElement('afterend', input);
+            // focus the input so the user can type immediately
+            input.focus();
+            return input;
+        }
+
         subheaderEl.addEventListener('click', () => {
             if (continued) return;
             continued = true;
             // Shrink the greeting smoothly
             greetingEl.classList.add('small-greeting');
             // Update the subheader text as requested
-            subheaderEl.textContent = 'Three of the greatest from the witching hour haunt your dreams...';
-            // Make the subheader non-interactive after pressing
-            subheaderEl.style.cursor = 'default';
+            subheaderEl.textContent = 'Three of the greatest from the witching hour';
+            // Create and show the code input
+            createCodeInput();
         });
 
         function randomIntervalMs() {
