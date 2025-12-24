@@ -44,6 +44,53 @@
         .code-input::placeholder {
             color: rgba(255,255,255,0.6);
         }
+        /* Announcement that appears after correct code */
+        .announcement {
+            position: fixed;
+            left: 50%;
+            top: 48%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.65);
+            padding: 1rem 1.4rem;
+            border-radius: 10px;
+            color: #fff;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            opacity: 0;
+            transition: opacity 400ms ease, transform 400ms ease;
+            pointer-events: auto;
+            z-index: 9999;
+            min-width: 320px;
+        }
+        .announcement.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .announcement .announce-line {
+            margin: 0.15rem 0;
+            opacity: 0;
+            transform: translateY(8px);
+            color: #ffdede;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+        }
+        .announcement .announce-line.title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff2f2;
+            letter-spacing: 0.6px;
+        }
+        .announcement .announce-line.meta {
+            font-size: 1rem;
+            color: #ffecec;
+        }
+        .announcement .dismiss-btn {
+            margin-top: 0.6rem;
+            display: inline-block;
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            border: 0;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
         h2 {
             text-align: center;
             font-family: 'Cormorant Garamond', 'Georgia', serif;
@@ -116,6 +163,8 @@
             greetingEl.style.transition = 'transform 400ms ease';
             greetingEl.style.transform = 'scale(1.02)';
             setTimeout(() => greetingEl.style.transform = '', 350);
+            // Show spooky announcement
+            showAnnouncement();
         }
 
         function createCodeInput() {
@@ -147,6 +196,49 @@
             // focus the input so the user can type immediately
             input.focus();
             return input;
+        }
+
+        function showAnnouncement() {
+            // Create the announcement container
+            const existing = document.querySelector('.announcement');
+            if (existing) return;
+            const a = document.createElement('div');
+            a.className = 'announcement';
+
+            const lines = [
+                { cls: 'title', text: '2:22 A Ghost Story' },
+                { cls: 'meta', text: 'Theatre Royal Plymouth' },
+                { cls: 'meta', text: '11th February' },
+                { cls: 'meta', text: 'Stalls - F1 & F2' }
+            ];
+
+            lines.forEach(l => {
+                const p = document.createElement('div');
+                p.className = 'announce-line ' + (l.cls || '');
+                p.textContent = l.text;
+                a.appendChild(p);
+            });
+
+            document.body.appendChild(a);
+            // brief delay to allow insertion
+            requestAnimationFrame(() => {
+                a.classList.add('show');
+                // stagger in the lines
+                const lineEls = a.querySelectorAll('.announce-line');
+                lineEls.forEach((el, idx) => {
+                    setTimeout(() => {
+                        el.style.transition = 'opacity 500ms ease, transform 500ms ease';
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    }, 120 * idx + 150);
+                });
+            });
+
+            // Make announcement persistent (no dismiss).
+            // Prevent further page interaction to leave this as the final state.
+            document.body.style.pointerEvents = 'none';
+            // Allow the announcement to remain interactive if needed (but no controls present)
+            a.style.pointerEvents = 'auto';
         }
 
         subheaderEl.addEventListener('click', () => {
