@@ -20,6 +20,12 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
             margin-top: 12vh;
         }
+        /* Shrunk greeting after continuing */
+        #greeting.small-greeting {
+            font-size: 2rem;
+            margin-top: 6vh;
+            transition: font-size 600ms ease, margin-top 600ms ease;
+        }
         h2 {
             text-align: center;
             font-family: 'Cormorant Garamond', 'Georgia', serif;
@@ -76,9 +82,16 @@
         const subheaderEl = document.getElementById('subheader');
         greetingEl.textContent = greetingText;
         subheaderEl.textContent = subheaderText;
+        let continued = false;
         subheaderEl.addEventListener('click', () => {
-            // Placeholder for continue action
-            alert('Continuing...');
+            if (continued) return;
+            continued = true;
+            // Shrink the greeting smoothly
+            greetingEl.classList.add('small-greeting');
+            // Update the subheader text as requested
+            subheaderEl.textContent = 'Three of the greatest from the witching hour haunt your dreams...';
+            // Make the subheader non-interactive after pressing
+            subheaderEl.style.cursor = 'default';
         });
 
         function randomIntervalMs() {
