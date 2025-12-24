@@ -39,6 +39,17 @@
             animation: flicker 100ms linear 0s 1;
             color: #ffdddd;
         }
+        /* Ghost particle styles */
+        .ghost {
+            position: fixed;
+            font-size: 2.5rem;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(1);
+            transition: opacity 1s ease-in-out, transform 3s linear;
+            will-change: transform, opacity;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+        }
     </style>
 </head>
 <body>
@@ -72,7 +83,12 @@
             setTimeout(() => {
                 greetingEl.classList.remove('flicker');
                 greetingEl.textContent = original;
-                // Schedule next
+                // After a delay (3-6s) spawn ghost particles
+                const ghostDelay = 3000 + Math.floor(Math.random() * 3001);
+                setTimeout(() => {
+                    spawnGhosts(3);
+                }, ghostDelay);
+                // Schedule next flicker
                 scheduleNext();
             }, 900);
         }
@@ -83,6 +99,39 @@
 
         // Start cycle
         scheduleNext();
+
+        // Ghost spawning logic
+        function spawnGhosts(count) {
+            const ghosts = [];
+            for (let i = 0; i < count; i++) {
+                const g = document.createElement('div');
+                g.className = 'ghost';
+                g.textContent = '👻';
+                // start near center with small random offset
+                const startX = window.innerWidth / 2 + (Math.random() - 0.5) * 200;
+                const startY = window.innerHeight / 2 + (Math.random() - 0.5) * 100;
+                g.style.left = startX + 'px';
+                g.style.top = startY + 'px';
+                document.body.appendChild(g);
+                // force layout then animate
+                requestAnimationFrame(() => {
+                    g.style.opacity = '1';
+                    const endX = Math.random() * window.innerWidth;
+                    const endY = Math.random() * window.innerHeight;
+                    const scale = 0.8 + Math.random() * 0.8;
+                    g.style.transform = `translate(${endX - startX}px, ${endY - startY}px) scale(${scale})`;
+                });
+                // Fade out after a bit and remove
+                const life = 2500 + Math.floor(Math.random() * 2500);
+                setTimeout(() => {
+                    g.style.opacity = '0';
+                    // remove after transition
+                    setTimeout(() => g.remove(), 1200);
+                }, life);
+                ghosts.push(g);
+            }
+            return ghosts;
+        }
     </script>
 </body>
 </html>
