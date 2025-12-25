@@ -178,7 +178,7 @@
             // When Enter pressed, check value
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
-                    if (input.value === '2:22') {
+                    if (input.value === '2:22' || input.value.toLowerCase() === '222') {
                         placeholderMethod();
                     } else {
                         // small shake to indicate wrong code
